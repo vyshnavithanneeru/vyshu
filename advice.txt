@@ -1,0 +1,69 @@
+
+1)Before Advice
+
+import org.springframework.aop.MethodBeforeAdvice;
+
+public class BeforeMethod implements MethodBeforeAdvice
+{
+	
+	public void before(Method method, Object[] args, Object target)
+		throws Throwable {
+	        System.out.println(" Before advice");
+	}
+}
+ 
+2)After returning Advice
+
+import org.springframework.aop.AfterReturningAdvice;
+
+public class AfterMethod implements AfterReturningAdvice
+{
+	public void afterReturning(Object returnValue, Method method,
+		Object[] args, Object target) throws Throwable {
+	        System.out.println(" After returning method");
+	}
+}
+
+3)After throwing advice
+
+import org.springframework.aop.ThrowsAdvice;
+
+public class ThrowException implements ThrowsAdvice {
+	public void afterThrowing(IllegalArgumentException e) throws Throwable {
+		System.out.println( "Throw exception");
+	}
+}
+
+4)Around Advice
+
+import org.aopalliance.intercept.MethodInterceptor;
+import org.aopalliance.intercept.MethodInvocation;
+
+public class AroundMethod implements MethodInterceptor {
+	@Override
+	public Object invoke(MethodInvocation methodInvocation) throws Throwable {
+
+		System.out.println("Method name : "
+				+ methodInvocation.getMethod().getName());
+		System.out.println("Method arguments : "
+				+ Arrays.toString(methodInvocation.getArguments()));
+
+		// same with MethodBeforeAdvice
+		System.out.println("HijackAroundMethod : Before method hijacked!");
+
+		try {
+			// proceed to original method call
+			Object result = methodInvocation.proceed();
+
+			// same with AfterReturningAdvice
+			System.out.println("HijackAroundMethod : Before after hijacked!");
+
+			return result;
+
+		} catch (IllegalArgumentException e) {
+			// same with ThrowsAdvice
+			System.out.println("AroundMethod");
+			throw e;
+		}
+	}
+}
